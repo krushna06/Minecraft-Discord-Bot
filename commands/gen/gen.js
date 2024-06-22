@@ -1,8 +1,8 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const { logChannelId, vouchChannelId } = require('../../config.json');
+const { logChannelId } = require('../../config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -13,12 +13,26 @@ module.exports = {
                 .setDescription('Type of account to generate')
                 .setRequired(true)
                 .addChoices(
-                    { name: 'Minecraft', value: 'minecraft' }
+                    { name: 'Minecraft', value: 'minecraft' },
+                    { name: 'Netflix', value: 'netflix' },
+                    { name: 'Steam', value: 'steam' }
                 )),
     async execute(interaction) {
         const accountType = interaction.options.getString('type');
-        const accountsPath = path.resolve(__dirname, '../../accounts.txt');
-        let accounts = fs.readFileSync(accountsPath, 'utf-8').split('\n').filter(line => line.trim() !== '');
+        const accountFiles = {
+            minecraft: 'minecraft.txt',
+            netflix: 'netflix.txt',
+            steam: 'steam.txt'
+        };
+
+        const accountsPath = path.resolve(__dirname, '../../', accountFiles[accountType]);
+        let accounts;
+        try {
+            accounts = fs.readFileSync(accountsPath, 'utf-8').split('\n').filter(line => line.trim() !== '');
+        } catch (error) {
+            console.error('Error reading account file:', error);
+            return interaction.reply({ content: 'An error occurred while reading the account file.', ephemeral: true });
+        }
 
         if (accounts.length === 0) {
             return interaction.reply({ content: 'No accounts available.', ephemeral: true });

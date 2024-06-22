@@ -1,5 +1,8 @@
 const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, EmbedBuilder } = require('discord.js');
 const { vouchChannelId } = require('../../config.json');
+const fs = require('fs');
+const path = require('path');
+const cron = require('node-cron');
 
 module.exports = {
     name: 'interactionCreate',
@@ -16,21 +19,31 @@ module.exports = {
                 console.error(error);
                 await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
             }
-        } else if (interaction.isButton() && interaction.customId === 'vouch') {
-            const modal = new ModalBuilder()
-                .setCustomId('vouchModal')
-                .setTitle('Vouch for the Account');
+        } else if (interaction.isButton()) {
+            if (interaction.customId === 'vouch') {
+                const modal = new ModalBuilder()
+                    .setCustomId('vouchModal')
+                    .setTitle('Vouch for the Account');
 
-            const vouchInput = new TextInputBuilder()
-                .setCustomId('vouchInput')
-                .setLabel('Please provide your vouch message')
-                .setStyle(TextInputStyle.Paragraph)
-                .setRequired(true);
+                const vouchInput = new TextInputBuilder()
+                    .setCustomId('vouchInput')
+                    .setLabel('Please provide your vouch message')
+                    .setStyle(TextInputStyle.Paragraph)
+                    .setRequired(true);
 
-            const actionRow = new ActionRowBuilder().addComponents(vouchInput);
-            modal.addComponents(actionRow);
+                const actionRow = new ActionRowBuilder().addComponents(vouchInput);
+                modal.addComponents(actionRow);
 
-            await interaction.showModal(modal);
+                await interaction.showModal(modal);
+            } else if (interaction.customId === 'refresh_stock') {
+                try {
+                    const stockEmbed = await createStockEmbed();
+                    await interaction.update({ embeds: [stockEmbed] });
+                } catch (error) {
+                    console.error(error);
+                    await interaction.reply({ content: 'There was an error while refreshing the stock!', ephemeral: true });
+                }
+            }
         } else if (interaction.isModalSubmit() && interaction.customId === 'vouchModal') {
             const vouchMessage = interaction.fields.getTextInputValue('vouchInput');
             const vouchChannel = interaction.client.channels.cache.get(vouchChannelId);
@@ -54,3 +67,35 @@ module.exports = {
         }
     },
 };
+
+async function createStockEmbed() {
+    const accountFiles = {
+        minecraft: 'minecraft.txt',
+        netflix: 'netflix.txt',
+        steam: 'steam.txt'
+    };
+
+    const accountCounts = {};
+
+    for (const [accountType, filename] of Object.entries(accountFiles)) {
+        const accountsPath = path.resolve(__dirname, '../../', filename);
+        let accounts = [];
+        try {
+            accounts = fs.readFileSync(accountsPath, 'utf-8').split('\n').filter(line => line.trim() !== '');
+        } catch (error) {
+            console.error('Error reading account file:', error);
+        }
+        accountCounts[accountType] = accounts.length;
+    }
+
+    const stockEmbed = new EmbedBuilder()
+        .setColor(0x00AE86)
+        .setTitle('Account Stock')
+        .setTimestamp();
+
+    for (const [accountType, count] of Object.entries(accountCounts)) {
+        stockEmbed.addFields({ name: accountType.charAt(0).toUpperCase() + accountType.slice(1), value: `[${count}]`, inline: true });
+    }
+
+    return stockEmbed;
+}
