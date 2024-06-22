@@ -6,14 +6,14 @@ const { ownerId } = require('../../config.json');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('gift')
-        .setDescription('Transfer credits to another user')
+        .setDescription('Gift credits to another user')
         .addUserOption(option =>
             option.setName('user')
-                .setDescription('User to transfer credits to')
+                .setDescription('User to gift credits to.')
                 .setRequired(true))
         .addIntegerOption(option =>
             option.setName('amount')
-                .setDescription('Amount of credits to transfer')
+                .setDescription('Amount of credits to gift.')
                 .setRequired(true)),
     async execute(interaction) {
         const targetUser = interaction.options.getUser('user');
@@ -38,6 +38,6 @@ module.exports = {
 
         fs.writeFileSync(creditsPath, JSON.stringify(creditsData));
 
-        await interaction.reply(`You have transferred ${amount} credits to ${targetUser.username}.`);
+        await interaction.reply(`You have gifted ${amount} credits to ${targetUser.username}.`);
     },
 };
