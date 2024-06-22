@@ -5,21 +5,17 @@ const { ownerId } = require('../../config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('give')
-        .setDescription('Give credits to a user')
+        .setName('gift')
+        .setDescription('Transfer credits to another user')
         .addUserOption(option =>
             option.setName('user')
-                .setDescription('User to give credits to')
+                .setDescription('User to transfer credits to')
                 .setRequired(true))
         .addIntegerOption(option =>
             option.setName('amount')
-                .setDescription('Amount of credits to give')
+                .setDescription('Amount of credits to transfer')
                 .setRequired(true)),
     async execute(interaction) {
-        if (interaction.user.id !== ownerId) {
-            return interaction.reply({ content: 'Only the owner/developer can use this command.', ephemeral: true });
-        }
-
         const targetUser = interaction.options.getUser('user');
         const amount = interaction.options.getInteger('amount');
 
@@ -32,10 +28,16 @@ module.exports = {
             return interaction.reply({ content: 'An error occurred while reading the credits file.', ephemeral: true });
         }
 
+        const userCredits = creditsData[interaction.user.id] || 0;
+        if (userCredits < amount) {
+            return interaction.reply({ content: 'You do not have enough credits.', ephemeral: true });
+        }
+
+        creditsData[interaction.user.id] = userCredits - amount;
         creditsData[targetUser.id] = (creditsData[targetUser.id] || 0) + amount;
 
         fs.writeFileSync(creditsPath, JSON.stringify(creditsData));
 
-        await interaction.reply(`You have given ${amount} credits to ${targetUser.username}.`);
+        await interaction.reply(`You have transferred ${amount} credits to ${targetUser.username}.`);
     },
 };

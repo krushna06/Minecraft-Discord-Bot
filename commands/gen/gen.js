@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const { logChannelId } = require('../../config.json');
+const { logChannelId, ownerId } = require('../../config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -107,3 +107,4 @@ module.exports = {
         }
     },
 };
+
