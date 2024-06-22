@@ -1,8 +1,5 @@
 const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, EmbedBuilder } = require('discord.js');
 const { vouchChannelId } = require('../../config.json');
-const fs = require('fs');
-const path = require('path');
-const cron = require('node-cron');
 
 module.exports = {
     name: 'interactionCreate',
@@ -43,6 +40,10 @@ module.exports = {
                     console.error(error);
                     await interaction.reply({ content: 'There was an error while refreshing the stock!', ephemeral: true });
                 }
+            } else if (interaction.customId === 'purchase') {
+                await interaction.reply({ content: 'Purchase button clicked!', ephemeral: true });
+            } else if (interaction.customId === 'ticket') {
+                await interaction.reply({ content: 'Ticket button clicked!', ephemeral: true });
             }
         } else if (interaction.isModalSubmit() && interaction.customId === 'vouchModal') {
             const vouchMessage = interaction.fields.getTextInputValue('vouchInput');

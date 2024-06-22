@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 
@@ -8,20 +8,23 @@ module.exports = {
         .setName('help')
         .setDescription('List all commands'),
     async execute(interaction) {
-        const commands = [];
+        const commandsByCategory = {};
         const commandsPath = path.resolve(__dirname, '../../commands');
-        
-        function readCommands(directory) {
+
+        function readCommands(directory, category = '') {
             const files = fs.readdirSync(directory, { withFileTypes: true });
 
             for (const file of files) {
                 const fullPath = path.join(directory, file.name);
                 if (file.isDirectory()) {
-                    readCommands(fullPath);
+                    readCommands(fullPath, file.name);
                 } else if (file.isFile() && file.name.endsWith('.js')) {
                     const command = require(fullPath);
                     if (command.data && command.data.name) {
-                        commands.push(command.data);
+                        if (!commandsByCategory[category]) {
+                            commandsByCategory[category] = [];
+                        }
+                        commandsByCategory[category].push(command.data);
                     }
                 }
             }
@@ -34,10 +37,23 @@ module.exports = {
             .setTitle('Help - List of Commands')
             .setTimestamp();
 
-        for (const command of commands) {
-            helpEmbed.addFields({ name: `/${command.name}`, value: command.description || 'No description available', inline: true });
+        for (const [category, commands] of Object.entries(commandsByCategory)) {
+            const commandDescriptions = commands.map(command => `/${command.name} - ${command.description || 'No description available'}`).join('\n');
+            helpEmbed.addFields({ name: category.charAt(0).toUpperCase() + category.slice(1), value: commandDescriptions, inline: false });
         }
 
-        await interaction.reply({ embeds: [helpEmbed] });
+        const purchaseButton = new ButtonBuilder()
+            .setCustomId('purchase')
+            .setLabel('Purchase')
+            .setStyle(ButtonStyle.Primary);
+
+        const ticketButton = new ButtonBuilder()
+            .setCustomId('ticket')
+            .setLabel('Ticket')
+            .setStyle(ButtonStyle.Secondary);
+
+        const row = new ActionRowBuilder().addComponents(purchaseButton, ticketButton);
+
+        await interaction.reply({ embeds: [helpEmbed], components: [row] });
     }
 };
