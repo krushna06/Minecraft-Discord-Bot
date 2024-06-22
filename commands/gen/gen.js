@@ -25,6 +25,20 @@ module.exports = {
             steam: 'steam.txt'
         };
 
+        const creditsPath = path.resolve(__dirname, '../../', 'credits.json');
+        let creditsData;
+        try {
+            creditsData = JSON.parse(fs.readFileSync(creditsPath, 'utf-8'));
+        } catch (error) {
+            console.error('Error reading credits file:', error);
+            return interaction.reply({ content: 'An error occurred while reading the credits file.', ephemeral: true });
+        }
+
+        const userCredits = creditsData[interaction.user.id] || 0;
+        if (userCredits <= 0) {
+            return interaction.reply({ content: 'You have no credits left.', ephemeral: true });
+        }
+
         const accountsPath = path.resolve(__dirname, '../../', accountFiles[accountType]);
         let accounts;
         try {
@@ -82,6 +96,11 @@ module.exports = {
             } else {
                 console.error('Log channel not found');
             }
+
+            // Deduct a credit after generating an account
+            creditsData[interaction.user.id] = userCredits - 1;
+            fs.writeFileSync(creditsPath, JSON.stringify(creditsData));
+
         } catch (error) {
             console.error('Error sending DM:', error);
             await interaction.reply({ content: 'I was unable to send you a DM. Please check your DM settings and try again.', ephemeral: true });
