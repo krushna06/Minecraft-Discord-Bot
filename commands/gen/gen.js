@@ -6,7 +6,7 @@ const { logChannelId, ownerId } = require('../../config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('gen')
+        .setName('generate')
         .setDescription('Generate an account')
         .addStringOption(option =>
             option.setName('type')

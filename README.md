@@ -11,6 +11,9 @@ Accounts should be entered into the `accounts.txt` file using the format `mail :
 - **Events and Error Handling:** Implemented to ensure smooth operation.
 - **No Repeated Accounts:** Each account is removed from `accounts.txt` after redemption.
 - **Vouch Button:** Included in DMs for user feedback.
+- **Gift/Give/Top Credits** - Credits system to redeem accounts.
+- **Role for status** - Have something in your status and get a role.
+- **Webhook logging** - Log every command bot event through a webhook.
 
 ---
 
@@ -25,15 +28,17 @@ Accounts should be entered into the `accounts.txt` file using the format `mail :
    npm install
    ```
    
-3. **Configure `accounts.txt`:**
-   Add Minecraft accounts in the format `mail : password`.
+3. **Add your accounts in `.txt`**
+   Add accounts in the format `mail : password`.
 
-4. **Start the Bot:**
+4. **Rename** `example.config.json` to `config.json` and fill it.
+
+5. **Start the Bot:**
    ```
    node index.js
    ```
    
-5. **Usage:**
+6. **Usage:**
    - Invite the bot to your Discord server.
    - Use `/generate type: Minecraft` to receive an account.
 
