@@ -1,15 +1,15 @@
-# Minecraft-Discord-Bot
+# Account-Discord-Bot
 
 ## What does it do?
-This Discord bot, built on discord.js v14, facilitates sending Minecraft account details to users upon request.
+This Discord bot, built on discord.js v14, facilitates sending account details to users upon request.
 
 ## How are the accounts processed?
-Accounts should be entered into the `accounts.txt` file using the format `mail : password`.
+Accounts should be entered into the `.txt` file using the format `mail : password`.
 
 ## Features:
-- **Slash Command:** `/gen type: Minecraft` to request an account.
+- **Slash Command:** `/gen type: Minecraft` to request an account. **Types: Minecraft, Netflix, Steam**
 - **Events and Error Handling:** Implemented to ensure smooth operation.
-- **No Repeated Accounts:** Each account is removed from `accounts.txt` after redemption.
+- **No Repeated Accounts:** Each account is removed from `.txt` after redemption.
 - **Vouch Button:** Included in DMs for user feedback.
 - **Gift/Give/Top Credits** - Credits system to redeem accounts.
 - **Role for status** - Have something in your status and get a role.
@@ -40,7 +40,7 @@ Accounts should be entered into the `accounts.txt` file using the format `mail :
    
 6. **Usage:**
    - Invite the bot to your Discord server.
-   - Use `/generate type: Minecraft` to receive an account.
+   - Use `/generate type: Minecraft` to receive a Minecraft account.
 
 ### Contributing:
 Contributions are welcome! If you'd like to contribute to this project, please fork the repository and submit a pull request with your changes.
