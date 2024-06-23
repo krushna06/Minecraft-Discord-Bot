@@ -3,6 +3,10 @@
     "clientId": "",
     "guildId": "",
     "logChannelId": "",
-    "vouchChannelId": ""
+    "vouchChannelId": "",
+    "ownerId": "",
+    "statusrole": true,
+    "statusroleid": "",
+    "statusname": ""
   }
   
