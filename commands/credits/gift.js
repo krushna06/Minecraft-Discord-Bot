@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const fs = require('fs');
 const path = require('path');
+const { log } = require('../../handler/logging');
 const { ownerId } = require('../../config.json');
 
 module.exports = {
@@ -19,6 +20,10 @@ module.exports = {
         const targetUser = interaction.options.getUser('user');
         const amount = interaction.options.getInteger('amount');
 
+        if (targetUser.id === interaction.user.id) {
+            return interaction.reply({ content: "You can't gift credits to yourself.", ephemeral: true });
+        }
+
         const creditsPath = path.resolve(__dirname, '../../', 'credits.json');
         let creditsData;
         try {
@@ -36,8 +41,16 @@ module.exports = {
         creditsData[interaction.user.id] = userCredits - amount;
         creditsData[targetUser.id] = (creditsData[targetUser.id] || 0) + amount;
 
-        fs.writeFileSync(creditsPath, JSON.stringify(creditsData));
+        try {
+            fs.writeFileSync(creditsPath, JSON.stringify(creditsData));
+        } catch (error) {
+            console.error('Error writing credits file:', error);
+            return interaction.reply({ content: 'An error occurred while writing the credits file.', ephemeral: true });
+        }
 
         await interaction.reply(`You have gifted ${amount} credits to ${targetUser.username}.`);
+
+        // Log the transaction to the webhook
+        await log(`User ${interaction.user.tag} (${interaction.user.id}) has gifted ${amount} credits to ${targetUser.tag} (${targetUser.id}).`);
     },
 };

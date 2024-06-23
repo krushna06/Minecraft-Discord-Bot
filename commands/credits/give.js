@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const fs = require('fs');
 const path = require('path');
 const { ownerId } = require('../../config.json');
+const { log } = require('../../handler/logging');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -34,8 +35,16 @@ module.exports = {
 
         creditsData[targetUser.id] = (creditsData[targetUser.id] || 0) + amount;
 
-        fs.writeFileSync(creditsPath, JSON.stringify(creditsData));
+        try {
+            fs.writeFileSync(creditsPath, JSON.stringify(creditsData));
+        } catch (error) {
+            console.error('Error writing credits file:', error);
+            return interaction.reply({ content: 'An error occurred while writing the credits file.', ephemeral: true });
+        }
 
         await interaction.reply(`You have given ${amount} credits to ${targetUser.username}.`);
+
+        // Log the transaction to the webhook
+        await log(`User ${interaction.user.tag} (${interaction.user.id}) has given ${amount} credits to ${targetUser.tag} (${targetUser.id}).`);
     },
 };
