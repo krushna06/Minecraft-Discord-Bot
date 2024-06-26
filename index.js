@@ -1,3 +1,4 @@
+const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const { Client, Collection, GatewayIntentBits, REST, Routes } = require('discord.js');
@@ -65,4 +66,20 @@ for (const folder of eventFolders) {
     }
 }
 
+// Start the REST API
+const apiProcess = spawn('node', ['api/v1/stock.js']);
+
+apiProcess.stdout.on('data', (data) => {
+  console.log(`API stdout: ${data}`);
+});
+
+apiProcess.stderr.on('data', (data) => {
+  console.error(`API stderr: ${data}`);
+});
+
+apiProcess.on('close', (code) => {
+  console.log(`API process exited with code ${code}`);
+});
+
+// Login for the Discord bot
 client.login(token);
