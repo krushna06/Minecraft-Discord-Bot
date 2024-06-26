@@ -5,7 +5,7 @@
     "logChannelId": "",
     "vouchChannelId": "",
     "ownerId": "",
-    "statusrole": true,
+    "statusrole": false,
     "statusroleid": "",
     "statusname": "",
     "webhookURL":  ""
