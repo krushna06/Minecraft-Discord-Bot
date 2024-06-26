@@ -8,6 +8,7 @@
     "statusrole": false,
     "statusroleid": "",
     "statusname": "",
-    "webhookURL":  ""
+    "webhookURL":  "",
+    "enableRestApi": false
   }
   

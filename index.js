@@ -67,19 +67,23 @@ for (const folder of eventFolders) {
 }
 
 // Start the REST API
-const apiProcess = spawn('node', ['api/v1/stock.js']);
+const { enableRestApi } = require('./config.json');
 
-apiProcess.stdout.on('data', (data) => {
-  console.log(`API stdout: ${data}`);
-});
+if (enableRestApi) {
+  const apiProcess = spawn('node', ['api/v1/stock.js']);
 
-apiProcess.stderr.on('data', (data) => {
-  console.error(`API stderr: ${data}`);
-});
+  apiProcess.stdout.on('data', (data) => {
+    console.log(`API stdout: ${data}`);
+  });
 
-apiProcess.on('close', (code) => {
-  console.log(`API process exited with code ${code}`);
-});
+  apiProcess.stderr.on('data', (data) => {
+    console.error(`API stderr: ${data}`);
+  });
+
+  apiProcess.on('close', (code) => {
+    console.log(`API process exited with code ${code}`);
+  });
+}
 
 // Login for the Discord bot
 client.login(token);
