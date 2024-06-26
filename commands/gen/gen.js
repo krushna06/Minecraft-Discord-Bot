@@ -39,7 +39,7 @@ module.exports = {
             return interaction.reply({ content: 'You have no credits left.', ephemeral: true });
         }
 
-        const accountsPath = path.resolve(__dirname, '../../', accountFiles[accountType]);
+        const accountsPath = path.resolve(__dirname, '../../accounts', accountFiles[accountType]);
         let accounts;
         try {
             accounts = fs.readFileSync(accountsPath, 'utf-8').split('\n').filter(line => line.trim() !== '');

@@ -81,7 +81,7 @@ async function createStockEmbed() {
     const accountCounts = {};
 
     for (const [accountType, filename] of Object.entries(accountFiles)) {
-        const accountsPath = path.resolve(__dirname, '../../', filename);
+        const accountsPath = path.resolve(__dirname, '../../accounts', filename);
         let accounts = [];
         try {
             accounts = fs.readFileSync(accountsPath, 'utf-8').split('\n').filter(line => line.trim() !== '');
