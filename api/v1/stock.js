@@ -4,6 +4,7 @@ const app = express();
 
 // Define the routes
 app.get('/api/v1/stock', (req, res) => {
+  console.log('Request made to /api/v1/stock');
   const files = [
     './accounts/minecraft.txt',
     './accounts/netflix.txt',
